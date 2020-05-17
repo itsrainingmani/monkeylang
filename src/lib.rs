@@ -1,5 +1,4 @@
 pub mod token {
-    pub type TokenType = String;
 
     #[derive(Debug, PartialEq)]
     pub struct Token {
@@ -7,25 +6,23 @@ pub mod token {
         pub literal: String,
     }
 
-    pub const ILLEGAL: &str = "ILLEGAL";
-    pub const EOF: &str = "EOF";
-
-    // Identifiers + literals
-    pub const IDENT: &str = "IDENT";
-    pub const INT: &str = "INT";
-
-    pub const ASSIGN: &str = "=";
-    pub const PLUS: &str = "+";
-
-    pub const COMMA: &str = ",";
-    pub const SEMICOLON: &str = ";";
-    pub const LPAREN: &str = "(";
-    pub const RPAREN: &str = ")";
-    pub const LBRACE: &str = "{";
-    pub const RBRACE: &str = "}";
-
-    pub const FUNCTION: &str = "FUNCTION";
-    pub const LET: &str = "LET";
+    #[derive(Debug, PartialEq)]
+    pub enum TokenType {
+        ILLEGAL,
+        EOF,
+        IDENT,     // add, foobar, x, y
+        INT,       // 12355
+        ASSIGN,    // =
+        PLUS,      // +
+        COMMA,     // ,
+        SEMICOLON, // ;
+        LPAREN,    // (
+        RPAREN,    // )
+        LBRACE,    // {
+        RBRACE,    // }
+        FUNCTION,
+        LET,
+    }
 }
 
 pub mod lexer {
@@ -63,43 +60,43 @@ pub mod lexer {
         pub fn next_token(&mut self) -> Token {
             let tok: Token = match self.ch {
                 '=' => Token {
-                    kind: ASSIGN.to_string(),
+                    kind: TokenType::ASSIGN,
                     literal: "=".to_string(),
                 },
                 ';' => Token {
-                    kind: SEMICOLON.to_string(),
+                    kind: TokenType::SEMICOLON,
                     literal: ";".to_string(),
                 },
                 '(' => Token {
-                    kind: LPAREN.to_string(),
+                    kind: TokenType::LPAREN,
                     literal: "(".to_string(),
                 },
                 ')' => Token {
-                    kind: RPAREN.to_string(),
+                    kind: TokenType::RPAREN,
                     literal: ")".to_string(),
                 },
                 ',' => Token {
-                    kind: COMMA.to_string(),
+                    kind: TokenType::COMMA,
                     literal: ",".to_string(),
                 },
                 '+' => Token {
-                    kind: PLUS.to_string(),
+                    kind: TokenType::PLUS,
                     literal: "+".to_string(),
                 },
                 '{' => Token {
-                    kind: LBRACE.to_string(),
+                    kind: TokenType::LBRACE,
                     literal: "{".to_string(),
                 },
                 '}' => Token {
-                    kind: RBRACE.to_string(),
+                    kind: TokenType::RBRACE,
                     literal: "}".to_string(),
                 },
                 '\0' => Token {
-                    kind: EOF.to_string(),
+                    kind: TokenType::EOF,
                     literal: "".to_string(),
                 },
                 _ => Token {
-                    kind: EOF.to_string(),
+                    kind: TokenType::EOF,
                     literal: "".to_string(),
                 },
             };

@@ -1,9 +1,4 @@
-use donkey::{lexer::Lexer, token};
-
-#[test]
-fn simple_test() {
-    assert_eq!(token::ILLEGAL, "ILLEGAL");
-}
+use donkey::{lexer::Lexer, token, token::TokenType};
 
 #[test]
 fn test_next_token() {
@@ -11,35 +6,35 @@ fn test_next_token() {
 
     let expected_tokens = vec![
         token::Token {
-            kind: token::ASSIGN.to_string(),
+            kind: TokenType::ASSIGN,
             literal: "=".to_string(),
         },
         token::Token {
-            kind: token::PLUS.to_string(),
+            kind: TokenType::PLUS,
             literal: "+".to_string(),
         },
         token::Token {
-            kind: token::LPAREN.to_string(),
+            kind: TokenType::LPAREN,
             literal: "(".to_string(),
         },
         token::Token {
-            kind: token::RPAREN.to_string(),
+            kind: TokenType::RPAREN,
             literal: ")".to_string(),
         },
         token::Token {
-            kind: token::LBRACE.to_string(),
+            kind: TokenType::LBRACE,
             literal: "{".to_string(),
         },
         token::Token {
-            kind: token::RBRACE.to_string(),
+            kind: TokenType::RBRACE,
             literal: "}".to_string(),
         },
         token::Token {
-            kind: token::COMMA.to_string(),
+            kind: TokenType::COMMA,
             literal: ",".to_string(),
         },
         token::Token {
-            kind: token::SEMICOLON.to_string(),
+            kind: TokenType::SEMICOLON,
             literal: ";".to_string(),
         },
         // token::Token {
@@ -50,7 +45,7 @@ fn test_next_token() {
 
     let mut actual_tokens: Vec<token::Token> = Vec::new();
 
-    for i in 0..lex.input.len() {
+    for _ in 0..lex.input.len() {
         let tok: token::Token = lex.next_token();
         actual_tokens.push(tok);
     }
