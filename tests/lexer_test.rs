@@ -1,4 +1,4 @@
-use donkey::{lexer::Lexer, token, token::TokenType};
+use monkey::{lexer::Lexer, token, token::TokenType};
 
 #[test]
 fn test_next_token() {
@@ -51,4 +51,28 @@ fn test_next_token() {
     }
 
     assert_eq!(expected_tokens, actual_tokens);
+}
+
+#[test]
+fn test_whitespace_consumption() {
+    let mut lex = Lexer::new(String::from("hello  \n\r\t  world"));
+
+    let whtspc: Vec<bool> = lex.input.chars().map(|x| x.is_whitespace()).collect();
+
+    println!("{:#?}", whtspc);
+}
+
+#[test]
+fn test_lexer_internal_state_change() {
+    let mut lex = Lexer::new(String::from("hello  \n\r\t  world"));
+
+    let initial_lex_pos = (lex.pos, lex.read_pos);
+
+    for _ in 0..=2 {
+        lex.next_token();
+    }
+
+    println!("{:#?}", initial_lex_pos);
+    println!("{:#?}", (lex.pos, lex.read_pos));
+    assert_ne!(initial_lex_pos, (lex.pos, lex.read_pos));
 }
