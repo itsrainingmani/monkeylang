@@ -1,3 +1,3 @@
 fn main() {
-    println!("Donkey Lang v0.1");
+    println!("Monkey Lang v0.1");
 }
