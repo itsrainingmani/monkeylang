@@ -6,7 +6,7 @@ pub mod token {
         pub literal: String,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone)]
     pub enum TokenType {
         ILLEGAL,
         EOF,
@@ -20,8 +20,16 @@ pub mod token {
         RPAREN,    // )
         LBRACE,    // {
         RBRACE,    // }
-        FUNCTION,
-        LET,
+        FUNCTION,  // fn
+        LET,       // let
+    }
+
+    pub fn keyword(ident: &str) -> TokenType {
+        match ident {
+            "fn" => TokenType::FUNCTION,
+            "let" => TokenType::LET,
+            _ => TokenType::IDENT,
+        }
     }
 }
 
@@ -55,6 +63,25 @@ pub mod lexer {
             }
             self.pos = self.read_pos;
             self.read_pos += 1;
+        }
+
+        pub fn read_ident(&mut self) -> String {
+            let start_pos = self.pos;
+
+            // Allows for names like foo_bar
+            while self.ch.is_alphabetic() || self.ch == '_' {
+                self.read_char();
+            }
+
+            // return the ident range
+            self.input.get(start_pos..self.pos).unwrap().to_string()
+        }
+
+        // Consumes whitespace
+        pub fn skip_whtspc(&mut self) {
+            while self.ch.is_whitespace() {
+                self.read_char()
+            }
         }
 
         pub fn next_token(&mut self) -> Token {
@@ -95,10 +122,18 @@ pub mod lexer {
                     kind: TokenType::EOF,
                     literal: "".to_string(),
                 },
-                _ => Token {
-                    kind: TokenType::EOF,
-                    literal: "".to_string(),
-                },
+                c => {
+                    if c.is_alphabetic() {
+                        let literal = self.read_ident();
+                        let kind = keyword(literal.as_str());
+                        return Token { kind, literal };
+                    } else {
+                        Token {
+                            kind: TokenType::ILLEGAL,
+                            literal: c.to_string(),
+                        }
+                    }
+                }
             };
 
             self.read_char();
