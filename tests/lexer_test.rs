@@ -78,7 +78,7 @@ fn test_lexer_internal_state_change() {
 }
 
 #[test]
-fn test_read_ident() {
+fn test_read_minimal_source() {
     let mut lex = Lexer::new(String::from("let five = 5;\nlet ten = 10;"));
 
     let expected_tokens = vec![
@@ -117,6 +117,174 @@ fn test_read_ident() {
         token::Token {
             kind: TokenType::INT,
             literal: "10".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+    ];
+
+    let mut actual_tokens: Vec<token::Token> = Vec::new();
+
+    for _ in expected_tokens.iter() {
+        let tok: token::Token = lex.next_token();
+        actual_tokens.push(tok);
+    }
+
+    assert_eq!(expected_tokens, actual_tokens);
+}
+
+#[test]
+fn test_read_expanded_source() {
+    let mut lex = Lexer::new(String::from(
+        "let five = 5;\nlet ten = 10;
+        let add = fn(x, y) {
+            x + y;
+        };
+        let result = add(five, ten);
+        ",
+    ));
+
+    let expected_tokens = vec![
+        token::Token {
+            kind: TokenType::LET,
+            literal: "let".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "five".to_string(),
+        },
+        token::Token {
+            kind: TokenType::ASSIGN,
+            literal: "=".to_string(),
+        },
+        token::Token {
+            kind: TokenType::INT,
+            literal: "5".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LET,
+            literal: "let".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "ten".to_string(),
+        },
+        token::Token {
+            kind: TokenType::ASSIGN,
+            literal: "=".to_string(),
+        },
+        token::Token {
+            kind: TokenType::INT,
+            literal: "10".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LET,
+            literal: "let".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "add".to_string(),
+        },
+        token::Token {
+            kind: TokenType::ASSIGN,
+            literal: "=".to_string(),
+        },
+        token::Token {
+            kind: TokenType::FUNCTION,
+            literal: "fn".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LPAREN,
+            literal: "(".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "x".to_string(),
+        },
+        token::Token {
+            kind: TokenType::COMMA,
+            literal: ",".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "y".to_string(),
+        },
+        token::Token {
+            kind: TokenType::RPAREN,
+            literal: ")".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LBRACE,
+            literal: "{".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "x".to_string(),
+        },
+        token::Token {
+            kind: TokenType::PLUS,
+            literal: "+".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "y".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+        token::Token {
+            kind: TokenType::RBRACE,
+            literal: "}".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LET,
+            literal: "let".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "result".to_string(),
+        },
+        token::Token {
+            kind: TokenType::ASSIGN,
+            literal: "=".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "add".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LPAREN,
+            literal: "(".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "five".to_string(),
+        },
+        token::Token {
+            kind: TokenType::COMMA,
+            literal: ",".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "ten".to_string(),
+        },
+        token::Token {
+            kind: TokenType::RPAREN,
+            literal: ")".to_string(),
         },
         token::Token {
             kind: TokenType::SEMICOLON,
