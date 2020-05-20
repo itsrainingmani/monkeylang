@@ -24,6 +24,8 @@ pub mod token {
         LET,       // let
     }
 
+    // Since it's really hard to initialize a static hashmap without
+    // the use of a crate, this is good stopgap
     pub fn keyword(ident: &str) -> TokenType {
         match ident {
             "fn" => TokenType::FUNCTION,
@@ -90,6 +92,7 @@ pub mod lexer {
         }
 
         pub fn next_token(&mut self) -> Token {
+            self.skip_whtspc();
             let tok: Token = match self.ch {
                 '=' => Token {
                     kind: TokenType::ASSIGN,
