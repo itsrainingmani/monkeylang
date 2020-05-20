@@ -45,7 +45,7 @@ fn test_next_token() {
 
     let mut actual_tokens: Vec<token::Token> = Vec::new();
 
-    for _ in 0..lex.input.len() {
+    for _ in expected_tokens.iter() {
         let tok: token::Token = lex.next_token();
         actual_tokens.push(tok);
     }
@@ -75,4 +75,61 @@ fn test_lexer_internal_state_change() {
     println!("{:#?}", initial_lex_pos);
     println!("{:#?}", (lex.pos, lex.read_pos));
     assert_ne!(initial_lex_pos, (lex.pos, lex.read_pos));
+}
+
+#[test]
+fn test_read_ident() {
+    let mut lex = Lexer::new(String::from("let five = 5;\nlet ten = 10;"));
+
+    let expected_tokens = vec![
+        token::Token {
+            kind: TokenType::LET,
+            literal: "let".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "five".to_string(),
+        },
+        token::Token {
+            kind: TokenType::ASSIGN,
+            literal: "=".to_string(),
+        },
+        token::Token {
+            kind: TokenType::INT,
+            literal: "5".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+        token::Token {
+            kind: TokenType::LET,
+            literal: "let".to_string(),
+        },
+        token::Token {
+            kind: TokenType::IDENT,
+            literal: "ten".to_string(),
+        },
+        token::Token {
+            kind: TokenType::ASSIGN,
+            literal: "=".to_string(),
+        },
+        token::Token {
+            kind: TokenType::INT,
+            literal: "10".to_string(),
+        },
+        token::Token {
+            kind: TokenType::SEMICOLON,
+            literal: ";".to_string(),
+        },
+    ];
+
+    let mut actual_tokens: Vec<token::Token> = Vec::new();
+
+    for _ in expected_tokens.iter() {
+        let tok: token::Token = lex.next_token();
+        actual_tokens.push(tok);
+    }
+
+    assert_eq!(expected_tokens, actual_tokens);
 }
