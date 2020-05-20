@@ -55,6 +55,8 @@ pub mod lexer {
             l
         }
 
+        // Reads a single character from the input stream
+        // by advancing the position and read position
         pub fn read_char(&mut self) {
             if self.read_pos >= self.input.len() {
                 self.ch = '\0';
@@ -65,6 +67,9 @@ pub mod lexer {
             self.read_pos += 1;
         }
 
+        // If the character is detected as being alphabetic,
+        // all subsequent alhpabetic characters are collected
+        // since this would be an identifier
         pub fn read_ident(&mut self) -> String {
             let start_pos = self.pos;
 
@@ -77,7 +82,7 @@ pub mod lexer {
             self.input.get(start_pos..self.pos).unwrap().to_string()
         }
 
-        // Consumes whitespace
+        // Consumes all unicode whitespaces
         pub fn skip_whtspc(&mut self) {
             while self.ch.is_whitespace() {
                 self.read_char()
