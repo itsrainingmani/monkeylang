@@ -274,11 +274,14 @@ pub mod repl {
                     let tok = lexer.next_token();
                     match tok.kind {
                         TokenType::EOF => break,
+                        TokenType::IDENT | TokenType::INT => {
+                            println!("{:#?}({:#?})", tok.kind, tok.literal);
+                        }
                         _ => {
-                            println!("{:#?}", tok);
-                            io::stdout().flush()?;
+                            println!("{:#?}", tok.kind);
                         }
                     }
+                    io::stdout().flush()?;
                 }
             }
             Ok(())
