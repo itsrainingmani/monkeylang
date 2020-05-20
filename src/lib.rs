@@ -288,3 +288,56 @@ pub mod repl {
         }
     }
 }
+
+pub mod ast {
+    use super::token::*;
+    pub trait Node {
+        fn token_literal(&self) -> String;
+    }
+
+    pub trait Statement: Node {}
+
+    pub trait Expression: Node {}
+
+    pub struct LetStmt {
+        token: Token,          // the Token::LET token
+        name: Identifier,      // holds the identifier of the binding
+        value: dyn Expression, // the expression that produces a value
+    }
+
+    impl Node for LetStmt {
+        fn token_literal(&self) -> String {
+            self.token.literal.clone()
+        }
+    }
+
+    impl Statement for LetStmt {}
+
+    pub struct Identifier {
+        token: Token,
+        value: String,
+    }
+
+    impl Node for Identifier {
+        fn token_literal(&self) -> String {
+            self.token.literal.clone()
+        }
+    }
+
+    impl Expression for Identifier {}
+
+    // Program is going to be the root node of every AST the Parser produces
+    pub struct Program {
+        statements: Vec<Box<dyn Statement>>,
+    }
+
+    impl Node for Program {
+        fn token_literal(&self) -> String {
+            if self.statements.len() > 0 {
+                self.statements.get(0).unwrap().token_literal()
+            } else {
+                "".to_string()
+            }
+        }
+    }
+}
