@@ -1,6 +1,6 @@
 pub mod token {
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone)]
     pub struct Token {
         pub kind: TokenType,
         pub literal: String,
@@ -299,19 +299,19 @@ pub mod ast {
 
     pub trait Expression: Node {}
 
-    pub struct LetStmt {
+    pub struct LetStmt<'a> {
         token: Token,          // the Token::LET token
-        name: Identifier,      // holds the identifier of the binding
+        name: &'a Identifier,  // holds the identifier of the binding
         value: dyn Expression, // the expression that produces a value
     }
 
-    impl Node for LetStmt {
+    impl<'a> Node for LetStmt<'a> {
         fn token_literal(&self) -> String {
             self.token.literal.clone()
         }
     }
 
-    impl Statement for LetStmt {}
+    impl<'a> Statement for LetStmt<'a> {}
 
     pub struct Identifier {
         token: Token,
@@ -339,5 +339,35 @@ pub mod ast {
                 "".to_string()
             }
         }
+    }
+}
+
+pub mod parser {
+    use super::{ast::*, lexer::*, token::*};
+
+    pub struct Parser<'a> {
+        lexer: &'a mut Lexer,
+
+        cur_token: Token,
+        peek_token: Token,
+    }
+
+    impl<'a> Parser<'a> {
+        fn new(lexer: &mut Lexer) -> Parser {
+            let cur_token = lexer.next_token();
+            let peek_token = lexer.next_token();
+            Parser {
+                lexer,
+                cur_token,
+                peek_token,
+            }
+        }
+
+        fn next_token(&mut self) {
+            self.cur_token = self.peek_token.clone();
+            self.peek_token = self.lexer.next_token();
+        }
+
+        fn parse_program() {}
     }
 }
