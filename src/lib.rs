@@ -84,6 +84,17 @@ pub mod lexer {
             self.input.get(start_pos..self.pos).unwrap().to_string()
         }
 
+        pub fn read_digit(&mut self) -> String {
+            let start_pos = self.pos;
+
+            while self.ch.is_digit(10) {
+                self.read_char();
+            }
+
+            // return the ident range
+            self.input.get(start_pos..self.pos).unwrap().to_string()
+        }
+
         // Consumes all unicode whitespaces
         pub fn skip_whtspc(&mut self) {
             while self.ch.is_whitespace() {
@@ -134,6 +145,10 @@ pub mod lexer {
                     if c.is_alphabetic() {
                         let literal = self.read_ident();
                         let kind = keyword(literal.as_str());
+                        return Token { kind, literal };
+                    } else if c.is_digit(10) {
+                        let literal = self.read_digit();
+                        let kind = TokenType::INT;
                         return Token { kind, literal };
                     } else {
                         Token {
