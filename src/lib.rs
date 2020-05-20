@@ -28,6 +28,8 @@ pub mod token {
         SLASH,    // /
         LT,       // <
         GT,       // >
+        EQ,       // ==
+        NEQ,      // !=
 
         // Keywords
         FUNCTION, // fn
@@ -90,7 +92,7 @@ pub mod lexer {
         }
 
         // If the character is detected as being alphabetic,
-        // all subsequent alhpabetic characters are collected
+        // all subsequent alphabetic characters are collected
         // since this would be an identifier
         pub fn read_ident(&mut self) -> String {
             let start_pos = self.pos;
@@ -104,6 +106,9 @@ pub mod lexer {
             self.input.get(start_pos..self.pos).unwrap().to_string()
         }
 
+        // If the character is detected as being numeric,
+        // all subsequent numeric characters are collected
+        // since this would be an identifier
         pub fn read_digit(&mut self) -> String {
             let start_pos = self.pos;
 
@@ -113,6 +118,17 @@ pub mod lexer {
 
             // return the ident range
             self.input.get(start_pos..self.pos).unwrap().to_string()
+        }
+
+        // Peeks ahead in the input and returns that char
+        // if the read_pos is greater than or equal to the input
+        // return the EOF character
+        pub fn peek_char(&self) -> char {
+            if self.read_pos >= self.input.len() {
+                '\0'
+            } else {
+                self.input.chars().nth(self.read_pos).unwrap()
+            }
         }
 
         // Consumes all unicode whitespaces
@@ -125,10 +141,20 @@ pub mod lexer {
         pub fn next_token(&mut self) -> Token {
             self.skip_whtspc();
             let tok: Token = match self.ch {
-                '=' => Token {
-                    kind: TokenType::ASSIGN,
-                    literal: "=".to_string(),
-                },
+                '=' => {
+                    if self.peek_char() == '=' {
+                        self.read_char();
+                        Token {
+                            kind: TokenType::EQ,
+                            literal: "==".to_string(),
+                        }
+                    } else {
+                        Token {
+                            kind: TokenType::ASSIGN,
+                            literal: "=".to_string(),
+                        }
+                    }
+                }
                 '+' => Token {
                     kind: TokenType::PLUS,
                     literal: "+".to_string(),
@@ -137,10 +163,20 @@ pub mod lexer {
                     kind: TokenType::MINUS,
                     literal: "-".to_string(),
                 },
-                '!' => Token {
-                    kind: TokenType::BANG,
-                    literal: "!".to_string(),
-                },
+                '!' => {
+                    if self.peek_char() == '=' {
+                        self.read_char();
+                        Token {
+                            kind: TokenType::NEQ,
+                            literal: "!=".to_string(),
+                        }
+                    } else {
+                        Token {
+                            kind: TokenType::BANG,
+                            literal: "!".to_string(),
+                        }
+                    }
+                }
                 '/' => Token {
                     kind: TokenType::SLASH,
                     literal: "/".to_string(),
