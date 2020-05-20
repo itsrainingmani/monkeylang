@@ -244,3 +244,44 @@ pub mod lexer {
         }
     }
 }
+
+pub mod repl {
+    use super::lexer::*;
+    use super::token::*;
+    use std::error::Error;
+    use std::io::{self, Write};
+    pub struct Repl {
+        pub prompt: String,
+    }
+
+    impl Repl {
+        pub fn new(prompt: String) -> Repl {
+            Repl { prompt }
+        }
+
+        pub fn run(&self) -> Result<(), Box<dyn Error>> {
+            println!("Monkey Lang v0.1 - REPL");
+
+            loop {
+                let mut input = String::new();
+                let mut lexer = Lexer::new(String::from("something"));
+                print!("{} ", self.prompt);
+                io::stdout().flush()?;
+                io::stdin().read_line(&mut input)?;
+
+                lexer.input = input.clone();
+                loop {
+                    let tok = lexer.next_token();
+                    match tok.kind {
+                        TokenType::EOF => break,
+                        _ => {
+                            println!("{:#?}", tok);
+                            io::stdout().flush()?;
+                        }
+                    }
+                }
+            }
+            Ok(())
+        }
+    }
+}
