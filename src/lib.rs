@@ -12,16 +12,31 @@ pub mod token {
         EOF,
         IDENT,     // add, foobar, x, y
         INT,       // 12355
-        ASSIGN,    // =
-        PLUS,      // +
         COMMA,     // ,
         SEMICOLON, // ;
         LPAREN,    // (
         RPAREN,    // )
         LBRACE,    // {
         RBRACE,    // }
-        FUNCTION,  // fn
-        LET,       // let
+
+        // Operators
+        ASSIGN,   // =
+        PLUS,     // +
+        MINUS,    // -
+        BANG,     // !
+        ASTERISK, // *
+        SLASH,    // /
+        LT,       // <
+        GT,       // >
+
+        // Keywords
+        FUNCTION, // fn
+        LET,      // let
+        TRUE,     // true
+        FALSE,    // false
+        IF,       // if
+        ELSE,     // else
+        RETURN,   // return
     }
 
     // Since it's really hard to initialize a static hashmap without
@@ -30,6 +45,11 @@ pub mod token {
         match ident {
             "fn" => TokenType::FUNCTION,
             "let" => TokenType::LET,
+            "true" => TokenType::TRUE,
+            "false" => TokenType::FALSE,
+            "if" => TokenType::IF,
+            "else" => TokenType::ELSE,
+            "return" => TokenType::RETURN,
             _ => TokenType::IDENT,
         }
     }
@@ -109,9 +129,41 @@ pub mod lexer {
                     kind: TokenType::ASSIGN,
                     literal: "=".to_string(),
                 },
+                '+' => Token {
+                    kind: TokenType::PLUS,
+                    literal: "+".to_string(),
+                },
+                '-' => Token {
+                    kind: TokenType::MINUS,
+                    literal: "-".to_string(),
+                },
+                '!' => Token {
+                    kind: TokenType::BANG,
+                    literal: "!".to_string(),
+                },
+                '/' => Token {
+                    kind: TokenType::SLASH,
+                    literal: "/".to_string(),
+                },
+                '*' => Token {
+                    kind: TokenType::ASTERISK,
+                    literal: "*".to_string(),
+                },
+                '<' => Token {
+                    kind: TokenType::LT,
+                    literal: "<".to_string(),
+                },
+                '>' => Token {
+                    kind: TokenType::GT,
+                    literal: ">".to_string(),
+                },
                 ';' => Token {
                     kind: TokenType::SEMICOLON,
                     literal: ";".to_string(),
+                },
+                ',' => Token {
+                    kind: TokenType::COMMA,
+                    literal: ",".to_string(),
                 },
                 '(' => Token {
                     kind: TokenType::LPAREN,
@@ -120,14 +172,6 @@ pub mod lexer {
                 ')' => Token {
                     kind: TokenType::RPAREN,
                     literal: ")".to_string(),
-                },
-                ',' => Token {
-                    kind: TokenType::COMMA,
-                    literal: ",".to_string(),
-                },
-                '+' => Token {
-                    kind: TokenType::PLUS,
-                    literal: "+".to_string(),
                 },
                 '{' => Token {
                     kind: TokenType::LBRACE,
